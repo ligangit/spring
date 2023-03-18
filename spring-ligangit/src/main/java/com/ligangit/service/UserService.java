@@ -8,10 +8,18 @@ import javax.annotation.PostConstruct;
 @Component
 public class UserService {
 
-	@Autowired
 	private OrderService orderService;
 
-	@PostConstruct
+
+	public UserService(OrderService orderService,OrderService orderService1) {
+		this.orderService = orderService;
+	}
+
+	@Autowired
+	public UserService(OrderService orderService) {
+		this.orderService = orderService;
+	}
+
 	public void test() {
 		System.out.println(orderService);
 

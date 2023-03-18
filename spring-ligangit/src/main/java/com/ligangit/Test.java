@@ -1,5 +1,6 @@
 package com.ligangit;
 
+import com.ligangit.service.OrderService;
 import com.ligangit.service.UserService;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -11,6 +12,7 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.cglib.proxy.Enhancer;
@@ -30,9 +32,17 @@ public class Test {
 	public static void main(String[] args) {
 
 		// 创建一个Spring容器
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.register(AppConfig.class);
 
-		UserService userService = (UserService) applicationContext.getBean("userService");
+		AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition().getBeanDefinition();
+		beanDefinition.setBeanClass(UserService.class);
+		beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(new OrderService());
+		context.registerBeanDefinition("userService", beanDefinition);
+
+		context.refresh();
+
+		UserService userService = (UserService) context.getBean("userService");
 		userService.test();
 
 
